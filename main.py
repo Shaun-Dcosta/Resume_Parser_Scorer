@@ -1,5 +1,5 @@
 import streamlit as st
-import fitz  # PyMuPDF
+import fitz 
 import google.generativeai as genai
 import numpy as np
 import faiss
@@ -7,7 +7,6 @@ import json
 import re
 from sentence_transformers import SentenceTransformer
 
-# API & Model Setup
 genai.configure(api_key="api key here")
 model = genai.GenerativeModel("gemini-1.5-pro-latest")
 embedding_model = SentenceTransformer("all-MiniLM-L6-v2")
@@ -16,12 +15,12 @@ dimension = 384
 index = faiss.IndexFlatL2(dimension)
 resume_store = {}
 
-# Extract text from uploaded PDF
+
 def extract_text_from_pdf(file):
     doc = fitz.open(stream=file.read(), filetype="pdf")
     return "".join([page.get_text() for page in doc])
 
-# Parse resume using RAG
+
 def parse_resume_with_rag(text):
     query_embedding = embedding_model.encode([text])
     if index.ntotal > 0:
@@ -59,7 +58,7 @@ Context from similar resumes:
     match = re.search(r"\{.*\}", response.text, re.DOTALL)
     return json.loads(match.group(0)) if match else {"error": "Parsing failed"}
 
-# Score resume against JD
+
 def score_resume(text, jd):
     prompt = f"""
     You are an AI Resume Evaluator.
@@ -150,7 +149,7 @@ def generate_assessment(skills, projects, internships):
     return json.loads(match.group(0)) if match else {"error": "Assessment generation failed"}
 
 
-# Streamlit UI
+
 st.set_page_config("Resume Parser & Assessment", layout="wide")
 st.title("📄 Resume Parser & AI-Powered Assessment")
 
